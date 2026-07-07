@@ -32,8 +32,9 @@ function exportChat() {
   URL.revokeObjectURL(url);
 }
 
-document.getElementById("exportChat").addEventListener("click", exportChat);
-closeFolderBtn.addEventListener("click", closeFolder);
+const cardBoard = document.getElementById("cardBoard");
+const overlay = document.getElementById("overlay");
+const closeFolderBtn = document.getElementById("closeFolder");
 const chatLog = document.getElementById("chatLog");
 const chatForm = document.getElementById("chatForm");
 const chatInput = document.getElementById("chatInput");
