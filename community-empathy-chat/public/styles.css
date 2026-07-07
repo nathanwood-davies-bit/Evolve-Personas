@@ -152,6 +152,21 @@ h1 {
   align-items: center;
   justify-content: space-between;
 }
+.folder__tab-actions { display: flex; align-items: center; gap: 12px; }
+
+.folder__export {
+  background: none;
+  border: 1px solid rgba(243,236,221,0.5);
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.folder__export:hover { background: rgba(243,236,221,0.12); }
+
 .folder__close {
   background: none; border: none; color: var(--paper);
   font-size: 20px; line-height: 1; cursor: pointer; padding: 0 4px;
