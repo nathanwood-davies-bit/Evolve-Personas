@@ -1,7 +1,4 @@
 // app.js — talks to our own backend (/api/personas, /api/chat), never to Anthropic directly.
-
-const cardBoard = document.getElementById("cardBoard");
-const overlay = document.getElementById("overlay");
 function exportChat() {
   if (!activePersona || history.length === 0) return;
 
