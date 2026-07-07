@@ -11,7 +11,8 @@ const composerNote = document.getElementById("composerNote");
 
 let personas = [];
 let activePersona = null;
-let history = []; // [{role: 'user'|'assistant', content: string}]
+let history = []; // [{role: 'user'|'assistant', content: string}] — the OPEN persona's conversation
+const conversationStore = {}; // personaId -> history array, kept alive even after closing the folder
 const MAX_TURNS = 24;
 
 function initials(name) {
@@ -54,7 +55,7 @@ function renderBoard() {
 
 function openFolder(persona) {
   activePersona = persona;
-  history = [];
+  history = conversationStore[persona.id] || [];
 
   document.getElementById("folderTabLabel").textContent = `CASE FILE — ${persona.name.toUpperCase()}`;
   document.getElementById("folderBadge").textContent = initials(persona.name);
@@ -64,7 +65,14 @@ function openFolder(persona) {
   document.getElementById("folderAge").textContent = persona.age;
 
   chatLog.innerHTML = "";
-  addMessage("persona", `Hi, I'm ${persona.name.split(" ")[0]}. Go ahead, ask me something.`, { record: false });
+  if (history.length === 0) {
+    addMessage("persona", `Hi, I'm ${persona.name.split(" ")[0]}. Go ahead, ask me something.`, { record: false });
+  } else {
+    // Restore the previous conversation without re-adding it to history (it's already there).
+    history.forEach((m) => {
+      addMessage(m.role === "user" ? "student" : "persona", m.content, { record: false });
+    });
+  }
   composerNote.textContent = "";
   chatInput.value = "";
   overlay.hidden = false;
@@ -72,9 +80,11 @@ function openFolder(persona) {
 }
 
 function closeFolder() {
+  if (activePersona) {
+    conversationStore[activePersona.id] = history;
+  }
   overlay.hidden = true;
   activePersona = null;
-  history = [];
 }
 
 function exportChat() {
@@ -182,5 +192,7 @@ chatForm.addEventListener("submit", async (e) => {
     chatInput.focus();
   }
 });
+
+loadPersonas();
 
 loadPersonas();
