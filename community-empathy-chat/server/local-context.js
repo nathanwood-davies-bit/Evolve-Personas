@@ -7,7 +7,11 @@
 
 module.exports = {
   // The name of your town, suburb, or local area
-  townName: "Port Melbourne",
+  townName: [
+    "Port Melbourne",
+    "Yarraville",
+    "Southbank",
+    ],
 
   // 3-6 real (or realistic) local landmarks, streets, or places
   landmarks: [
@@ -18,8 +22,16 @@ module.exports = {
   ],
 
   // A real (or realistic) piece of local transport info
-  transitNote: "there is no train to connect Port Melbourne to CBD, or to the Western suburbs",
+  transitNote: [
+    "there is no train to connect Port Melbourne to CBD, or to the Western suburbs",
+    "travelling by bike can feel unsafe",
+    ],
 
   // A real (or realistic) current local issue people in the area actually talk about
-  localIssue: "the proposed closure of Westgate Park","the delays in the Fishermans Ben redevelopment", "the cancellation of the Metro Tunnel 2 train line or the new tram line",
+  localIssue: [
+    "the proposed closure of Westgate Park",
+    "the delays in the Fishermans Ben redevelopment",
+    "the cancellation of the Metro Tunnel 2 train line and new tram line on Plummer Street",
+    "the proposed netball courts in JL Murphy reserve",
+    ],
 };
