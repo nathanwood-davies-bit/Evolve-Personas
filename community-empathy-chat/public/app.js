@@ -1,37 +1,9 @@
 // app.js — talks to our own backend (/api/personas, /api/chat), never to Anthropic directly.
-function exportChat() {
-  if (!activePersona || history.length === 0) return;
-
-  const timestamp = new Date().toLocaleString();
-  const lines = [
-    `Community Case Files — Chat Transcript`,
-    `Persona: ${activePersona.name} (${activePersona.role}, age ${activePersona.age})`,
-    `Exported: ${timestamp}`,
-    `${"-".repeat(40)}`,
-    "",
-  ];
-  history.forEach((m) => {
-    const speaker = m.role === "user" ? "Student" : activePersona.name;
-    lines.push(`${speaker}: ${m.content}`);
-    lines.push("");
-  });
-
-  const blob = new Blob([lines.join("\n")], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  const safeName = activePersona.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-  const dateStamp = new Date().toISOString().slice(0, 10);
-  a.href = url;
-  a.download = `${safeName}-chat-${dateStamp}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
 
 const cardBoard = document.getElementById("cardBoard");
 const overlay = document.getElementById("overlay");
 const closeFolderBtn = document.getElementById("closeFolder");
+const exportChatBtn = document.getElementById("exportChat");
 const chatLog = document.getElementById("chatLog");
 const chatForm = document.getElementById("chatForm");
 const chatInput = document.getElementById("chatInput");
@@ -105,6 +77,42 @@ function closeFolder() {
   history = [];
 }
 
+function exportChat() {
+  if (!activePersona) return;
+
+  if (history.length === 0) {
+    composerNote.textContent = "Ask at least one question before exporting.";
+    return;
+  }
+
+  const timestamp = new Date().toLocaleString();
+  const lines = [
+    `Community Case Files — Chat Transcript`,
+    `Persona: ${activePersona.name} (${activePersona.role}, age ${activePersona.age})`,
+    `Exported: ${timestamp}`,
+    `${"-".repeat(40)}`,
+    "",
+  ];
+  history.forEach((m) => {
+    const speaker = m.role === "user" ? "Student" : activePersona.name;
+    lines.push(`${speaker}: ${m.content}`);
+    lines.push("");
+  });
+
+  const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const safeName = activePersona.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const dateStamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `${safeName}-chat-${dateStamp}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+exportChatBtn.addEventListener("click", exportChat);
 closeFolderBtn.addEventListener("click", closeFolder);
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeFolder(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !overlay.hidden) closeFolder(); });
