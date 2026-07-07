@@ -1,0 +1,231 @@
+:root {
+  --cork: #2F4A43;
+  --cork-dark: #243A34;
+  --paper: #F3ECDD;
+  --paper-shadow: #d9cfb6;
+  --ink: #1E2A28;
+  --ink-soft: #4b5a56;
+  --brick: #B5533C;
+  --mustard: #D9A441;
+  --ring: #D9A441;
+  --radius: 3px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--cork);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,0.12) 1px, transparent 1px);
+  background-size: 14px 14px;
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+}
+
+.mono { font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.04em; }
+
+.board { max-width: 1080px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.board__header { max-width: 640px; margin-bottom: 40px; }
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--mustard);
+  margin: 0 0 10px;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(32px, 5vw, 48px);
+  color: var(--paper);
+  margin: 0 0 14px;
+  line-height: 1.05;
+}
+
+.intro { color: rgba(243,236,221,0.82); font-size: 16px; line-height: 1.55; margin: 0; }
+
+.cork {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 28px 24px;
+}
+
+.cork__loading { color: rgba(243,236,221,0.7); font-family: 'IBM Plex Mono', monospace; }
+
+/* --- Case file card (pinned to corkboard) --- */
+.card {
+  position: relative;
+  background: var(--paper);
+  border-radius: var(--radius);
+  padding: 20px 18px 18px;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.28), 0 2px 0 rgba(255,255,255,0.4) inset;
+  cursor: pointer;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  border: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
+.card:hover, .card:focus-visible {
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow: 0 18px 26px rgba(0,0,0,0.34), 0 2px 0 rgba(255,255,255,0.4) inset;
+  outline: none;
+}
+.card:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+
+.card__tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 64px;
+  height: 22px;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.7);
+}
+
+.card__top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+
+.card__badge {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--paper);
+  flex-shrink: 0;
+}
+
+.card__name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; margin: 0; }
+.card__role { font-size: 12px; color: var(--ink-soft); margin: 2px 0 0; }
+
+.card__blurb { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); margin: 0 0 14px; }
+
+.card__stamp {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+  transform: rotate(-3deg);
+}
+
+/* --- Overlay + folder (chat) --- */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(10, 16, 15, 0.72);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.folder {
+  background: var(--paper);
+  width: min(560px, 100%);
+  max-height: min(680px, 92vh);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+.folder__tab {
+  background: var(--cork-dark);
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.folder__close {
+  background: none; border: none; color: var(--paper);
+  font-size: 20px; line-height: 1; cursor: pointer; padding: 0 4px;
+}
+
+.folder__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-bottom: 1px dashed var(--paper-shadow);
+}
+
+.folder__badge {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px;
+  color: var(--paper); flex-shrink: 0;
+}
+
+.folder__meta { flex: 1; min-width: 0; }
+.folder__meta h2 { font-family: 'Fraunces', serif; font-size: 21px; margin: 0 0 2px; }
+.folder__meta p { margin: 0; font-size: 11.5px; color: var(--ink-soft); }
+
+.folder__age { text-align: center; flex-shrink: 0; }
+.folder__age span:first-child { display: block; font-size: 20px; font-weight: 600; }
+.folder__age-label { font-size: 10px; color: var(--ink-soft); }
+
+.chatlog {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-image: repeating-linear-gradient(rgba(30,42,40,0.05) 0 1px, transparent 1px 32px);
+  background-position: 0 8px;
+}
+
+.msg { max-width: 82%; padding: 10px 13px; border-radius: 10px; font-size: 14.5px; line-height: 1.45; }
+.msg--persona { align-self: flex-start; background: #fff; border: 1px solid var(--paper-shadow); border-bottom-left-radius: 3px; }
+.msg--student { align-self: flex-end; background: var(--cork); color: var(--paper); border-bottom-right-radius: 3px; }
+.msg--typing { align-self: flex-start; color: var(--ink-soft); font-style: italic; font-size: 13px; }
+.msg--system { align-self: center; background: rgba(181,83,60,0.12); color: var(--brick); font-size: 13px; text-align: center; }
+
+.composer {
+  display: flex; gap: 8px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--paper-shadow);
+  background: var(--paper);
+}
+.composer input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid var(--paper-shadow);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14.5px;
+  background: #fff;
+}
+.composer input:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+.composer button {
+  background: var(--brick);
+  color: #fff;
+  border: none;
+  padding: 0 20px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+.composer button:disabled { opacity: 0.5; cursor: default; }
+.composer__note { font-size: 11.5px; color: var(--ink-soft); text-align: center; margin: 0 0 12px; padding: 0 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .card:hover, .card:focus-visible { transition: none; }
+}

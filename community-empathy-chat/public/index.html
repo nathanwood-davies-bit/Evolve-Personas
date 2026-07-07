@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Community Case Files — Empathy Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="board">
+  <header class="board__header">
+    <p class="eyebrow">DESIGN THINKING · COMMUNITY UNIT</p>
+    <h1>Community Case Files</h1>
+    <p class="intro">Pick a case file below and start a conversation. Ask questions like a good interviewer would —
+      about their day, their frustrations, what they wish people understood. You're building empathy, not collecting facts.</p>
+  </header>
+
+  <section id="cardBoard" class="cork" aria-label="Persona case files">
+    <p class="cork__loading">Pinning up case files…</p>
+  </section>
+</div>
+
+<div id="overlay" class="overlay" hidden>
+  <div class="folder" role="dialog" aria-modal="true" aria-labelledby="folderName">
+    <div class="folder__tab">
+      <span id="folderTabLabel">CASE FILE</span>
+      <button id="closeFolder" class="folder__close" aria-label="Close case file">×</button>
+    </div>
+
+    <div class="folder__head">
+      <div id="folderBadge" class="folder__badge">MO</div>
+      <div class="folder__meta">
+        <h2 id="folderName">Name</h2>
+        <p id="folderRole" class="mono">ROLE</p>
+      </div>
+      <div class="folder__age">
+        <span id="folderAge" class="mono">—</span>
+        <span class="mono folder__age-label">AGE</span>
+      </div>
+    </div>
+
+    <div id="chatLog" class="chatlog" aria-live="polite"></div>
+
+    <form id="chatForm" class="composer">
+      <input id="chatInput" type="text" autocomplete="off" placeholder="Ask a question…" maxlength="500" />
+      <button type="submit">Ask</button>
+    </form>
+    <p id="composerNote" class="composer__note"></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
