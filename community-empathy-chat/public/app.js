@@ -95,6 +95,62 @@ function exportChat() {
     return;
   }
 
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const margin = 48;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const maxWidth = pageWidth - margin * 2;
+  const lineHeight = 14;
+  let y = margin;
+
+  function checkPageBreak(neededHeight) {
+    if (y + neededHeight > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  }
+
+  // Header
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("Community Case Files — Chat Transcript", margin, y);
+  y += 24;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(11);
+  doc.text(`Persona: ${activePersona.name} (${activePersona.role}, age ${activePersona.age})`, margin, y);
+  y += 16;
+  doc.text(`Exported: ${new Date().toLocaleString()}`, margin, y);
+  y += 18;
+
+  doc.setDrawColor(200);
+  doc.line(margin, y, pageWidth - margin, y);
+  y += 22;
+
+  // Messages
+  doc.setFontSize(11);
+  history.forEach((m) => {
+    const speaker = m.role === "user" ? "Student" : activePersona.name;
+    const lines = doc.splitTextToSize(m.content, maxWidth);
+    const blockHeight = lineHeight + lines.length * lineHeight + 8;
+
+    checkPageBreak(blockHeight);
+
+    doc.setFont("helvetica", "bold");
+    doc.text(`${speaker}:`, margin, y);
+    y += lineHeight;
+
+    doc.setFont("helvetica", "normal");
+    doc.text(lines, margin, y);
+    y += lines.length * lineHeight + 8;
+  });
+
+  const safeName = activePersona.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const dateStamp = new Date().toISOString().slice(0, 10);
+  doc.save(`${safeName}-chat-${dateStamp}.pdf`);
+}
+
   const timestamp = new Date().toLocaleString();
   const lines = [
     `Community Case Files — Chat Transcript`,
