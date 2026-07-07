@@ -82,7 +82,7 @@ app.post("/api/chat", async (req, res) => {
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 400,
+        max_tokens: 500,
         system: persona.systemPrompt,
         messages: cleanMessages,
       }),
