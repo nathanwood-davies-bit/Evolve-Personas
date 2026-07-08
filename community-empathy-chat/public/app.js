@@ -1,6 +1,20 @@
 // app.js — talks to our own backend (/api/personas, /api/chat), never to Anthropic directly.
 
+const CHALLENGE_LABELS = {
+  "sport-girls": "Girls in Sport",
+  "social-connection": "Life After the Social Media Ban",
+  "belonging-safety": "Feeling Safe & Belonging",
+  "healthy-masculinity": "Healthy Masculinity",
+  "refugee-support": "Supporting Refugees",
+  "migrant-histories": "Celebrating Migrant Histories",
+  "remove-barriers": "Removing Barriers to Participation",
+  "cost-of-living": "Cost of Living Crisis",
+  "redesign-spaces": "Redesigning Safer Spaces",
+  "community-support": "Supporting Communities in Need",
+};
+
 const cardBoard = document.getElementById("cardBoard");
+const challengeFilters = document.getElementById("challengeFilters");
 const overlay = document.getElementById("overlay");
 const closeFolderBtn = document.getElementById("closeFolder");
 const exportChatBtn = document.getElementById("exportChat");
@@ -10,6 +24,7 @@ const chatInput = document.getElementById("chatInput");
 const composerNote = document.getElementById("composerNote");
 
 let personas = [];
+let activeFilter = null;
 let activePersona = null;
 let history = []; // [{role: 'user'|'assistant', content: string}] — the OPEN persona's conversation
 const conversationStore = {}; // personaId -> history array, kept alive even after closing the folder
@@ -23,16 +38,60 @@ async function loadPersonas() {
   try {
     const res = await fetch("/api/personas");
     personas = await res.json();
+    renderFilters();
     renderBoard();
   } catch (err) {
     cardBoard.innerHTML = `<p class="cork__loading">Couldn't load case files. Is the server running?</p>`;
   }
 }
 
+function renderFilters() {
+  const usedChallenges = new Set();
+  personas.forEach((p) => (p.challenges || []).forEach((c) => usedChallenges.add(c)));
+
+  challengeFilters.innerHTML = "";
+
+  const allChip = document.createElement("button");
+  allChip.type = "button";
+  allChip.className = "chip" + (activeFilter === null ? " chip--active" : "");
+  allChip.textContent = "All";
+  allChip.addEventListener("click", () => {
+    activeFilter = null;
+    renderFilters();
+    renderBoard();
+  });
+  challengeFilters.appendChild(allChip);
+
+  Array.from(usedChallenges).forEach((code) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip" + (activeFilter === code ? " chip--active" : "");
+    chip.textContent = CHALLENGE_LABELS[code] || code;
+    chip.addEventListener("click", () => {
+      activeFilter = activeFilter === code ? null : code;
+      renderFilters();
+      renderBoard();
+    });
+    challengeFilters.appendChild(chip);
+  });
+}
+
 function renderBoard() {
   cardBoard.innerHTML = "";
-  personas.forEach((p, i) => {
+  const visible = activeFilter
+    ? personas.filter((p) => (p.challenges || []).includes(activeFilter))
+    : personas;
+
+  if (visible.length === 0) {
+    cardBoard.innerHTML = `<p class="cork__loading">No case files tagged for this challenge yet.</p>`;
+    return;
+  }
+
+  visible.forEach((p, i) => {
     const tilt = (i % 2 === 0 ? -1 : 1) * (1.5 + (i % 3));
+    const tagsHtml = (p.challenges || [])
+      .map((c) => `<span class="card__tag">${CHALLENGE_LABELS[c] || c}</span>`)
+      .join("");
     const btn = document.createElement("button");
     btn.className = "card";
     btn.style.setProperty("--tilt", `${tilt}deg`);
@@ -46,6 +105,7 @@ function renderBoard() {
         </div>
       </div>
       <p class="card__blurb">${p.blurb}</p>
+      <div class="card__tags">${tagsHtml}</div>
       <span class="card__stamp" style="color:${p.colour}">CASE FILE · AGE ${p.age}</span>
     `;
     btn.addEventListener("click", () => openFolder(p));
