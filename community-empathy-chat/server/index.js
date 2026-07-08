@@ -37,13 +37,14 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 // Public list — only what the frontend needs to render persona cards.
 // Never sends systemPrompt to the browser.
 app.get("/api/personas", (req, res) => {
-  const publicPersonas = personas.map(({ id, name, age, role, colour, blurb }) => ({
+  const publicPersonas = personas.map(({ id, name, age, role, colour, blurb, challenges }) => ({
     id,
     name,
     age,
     role,
     colour,
     blurb,
+    challenges,
   }));
   res.json(publicPersonas);
 });
