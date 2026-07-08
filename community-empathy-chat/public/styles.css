@@ -49,6 +49,32 @@ h1 {
 
 .intro { color: rgba(243,236,221,0.82); font-size: 16px; line-height: 1.55; margin: 0; }
 
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--paper);
+  background: rgba(243,236,221,0.1);
+  border: 1px solid rgba(243,236,221,0.35);
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.chip:hover { background: rgba(243,236,221,0.2); }
+.chip--active {
+  background: var(--mustard);
+  border-color: var(--mustard);
+  color: var(--cork-dark);
+  font-weight: 600;
+}
+
 .cork {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
